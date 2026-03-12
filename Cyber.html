@@ -1,0 +1,2020 @@
+<!doctype html>
+<html lang="id">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>CYBERSECURITY.COM</title>
+        <link
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+            rel="stylesheet"
+        />
+        <style>
+            /* --- VARIABLES & RESET --- */
+            :root {
+                --primary-color: #00ff41; /* Matrix Green */
+                --secondary-color: #00f0ff; /* Cyber Cyan */
+                --warning-color: #ffaa00;
+                --danger-color: #ff0055;
+                --bg-color: #050505;
+                --panel-bg: rgba(10, 10, 10, 0.85);
+                --text-glow: 0 0 10px rgba(0, 255, 65, 0.7);
+                --border-glow: 0 0 15px rgba(0, 255, 65, 0.3);
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                font-family: "Courier New", Courier, monospace;
+            }
+
+            body {
+                background-color: var(--bg-color);
+                color: #fff;
+                overflow-x: hidden;
+                min-height: 100vh;
+            }
+
+            /* --- BACKGROUND ANIMATION (MATRIX RAIN) --- */
+            #canvas {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                z-index: -1;
+                opacity: 0.25;
+            }
+
+            /* --- UTILITIES --- */
+            .hidden {
+                display: none !important;
+            }
+
+            .glitch {
+                position: relative;
+                font-size: 2.5rem;
+                font-weight: bold;
+                color: #fff;
+                letter-spacing: 3px;
+                text-transform: uppercase;
+            }
+
+            .glitch::before,
+            .glitch::after {
+                content: attr(data-text);
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+            }
+
+            .glitch::before {
+                left: 2px;
+                text-shadow: -1px 0 #ff00c1;
+                clip: rect(44px, 450px, 56px, 0);
+                animation: glitch-anim 5s infinite linear alternate-reverse;
+            }
+
+            .glitch::after {
+                left: -2px;
+                text-shadow: -1px 0 #00fff9;
+                clip: rect(44px, 450px, 56px, 0);
+                animation: glitch-anim2 5s infinite linear alternate-reverse;
+            }
+
+            @keyframes glitch-anim {
+                0% {
+                    clip: rect(12px, 9999px, 32px, 0);
+                }
+                20% {
+                    clip: rect(85px, 9999px, 10px, 0);
+                }
+                40% {
+                    clip: rect(40px, 9999px, 90px, 0);
+                }
+                60% {
+                    clip: rect(10px, 9999px, 60px, 0);
+                }
+                80% {
+                    clip: rect(60px, 9999px, 20px, 0);
+                }
+                100% {
+                    clip: rect(30px, 9999px, 80px, 0);
+                }
+            }
+
+            @keyframes glitch-anim2 {
+                0% {
+                    clip: rect(60px, 9999px, 10px, 0);
+                }
+                20% {
+                    clip: rect(20px, 9999px, 80px, 0);
+                }
+                40% {
+                    clip: rect(90px, 9999px, 10px, 0);
+                }
+                60% {
+                    clip: rect(15px, 9999px, 70px, 0);
+                }
+                80% {
+                    clip: rect(50px, 9999px, 30px, 0);
+                }
+                100% {
+                    clip: rect(10px, 9999px, 90px, 0);
+                }
+            }
+
+            @keyframes blinker {
+                50% {
+                    opacity: 0;
+                }
+            }
+
+            @keyframes scanline {
+                0% {
+                    transform: translateY(-100%);
+                }
+                100% {
+                    transform: translateY(100%);
+                }
+            }
+
+            /* --- LOGIN SECTION --- */
+            .login-container {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                flex-direction: column;
+                position: relative;
+            }
+
+            .login-container::after {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 5px;
+                background: linear-gradient(
+                    90deg,
+                    transparent,
+                    var(--primary-color),
+                    transparent
+                );
+                animation: scanline 3s linear infinite;
+            }
+
+            .cyber-box {
+                background: var(--panel-bg);
+                padding: 40px;
+                border: 1px solid var(--primary-color);
+                box-shadow: var(--border-glow);
+                backdrop-filter: blur(5px);
+                width: 380px;
+                position: relative;
+                clip-path: polygon(0 0, 100% 0, 100% 85%, 95% 100%, 0 100%);
+            }
+
+            .cyber-box::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 15px;
+                height: 15px;
+                border-top: 2px solid var(--primary-color);
+                border-left: 2px solid var(--primary-color);
+            }
+
+            .cyber-box::after {
+                content: "";
+                position: absolute;
+                bottom: 0;
+                right: 0;
+                width: 15px;
+                height: 15px;
+                border-bottom: 2px solid var(--primary-color);
+                border-right: 2px solid var(--primary-color);
+            }
+
+            .cyber-box h2 {
+                text-align: center;
+                margin-bottom: 30px;
+                color: var(--primary-color);
+                text-shadow: var(--text-glow);
+                font-size: 1.2rem;
+            }
+
+            .input-group {
+                position: relative;
+                margin-bottom: 20px;
+            }
+
+            .input-group i {
+                position: absolute;
+                left: 12px;
+                top: 12px;
+                color: var(--primary-color);
+            }
+
+            .input-group input {
+                width: 100%;
+                padding: 12px 12px 12px 40px;
+                background: rgba(0, 0, 0, 0.7);
+                border: 1px solid #333;
+                color: #fff;
+                outline: none;
+                transition: 0.3s;
+                font-size: 14px;
+            }
+
+            .input-group input:focus {
+                border-color: var(--primary-color);
+                box-shadow: 0 0 15px rgba(0, 255, 65, 0.2);
+            }
+
+            .cyber-btn {
+                width: 100%;
+                padding: 12px;
+                background: transparent;
+                border: 1px solid var(--primary-color);
+                color: var(--primary-color);
+                font-weight: bold;
+                cursor: pointer;
+                transition: 0.3s;
+                text-transform: uppercase;
+                letter-spacing: 2px;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .cyber-btn:hover {
+                background: var(--primary-color);
+                color: #000;
+                box-shadow: 0 0 25px var(--primary-color);
+            }
+
+            /* --- DASHBOARD SECTION --- */
+            .dashboard-container {
+                display: grid;
+                grid-template-columns: 260px 1fr;
+                min-height: 100vh;
+            }
+
+            /* Sidebar */
+            .sidebar {
+                background: rgba(0, 0, 0, 0.95);
+                border-right: 1px solid var(--primary-color);
+                padding: 20px;
+                display: flex;
+                flex-direction: column;
+                position: fixed;
+                height: 100vh;
+                width: 260px;
+                z-index: 100;
+            }
+
+            .logo {
+                font-size: 1.3rem;
+                font-weight: bold;
+                color: var(--secondary-color);
+                margin-bottom: 40px;
+                text-align: center;
+                padding: 15px;
+                border: 1px solid var(--secondary-color);
+                text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+            }
+
+            .nav-item {
+                padding: 12px 15px;
+                margin-bottom: 5px;
+                color: #aaa;
+                cursor: pointer;
+                transition: 0.3s;
+                border-left: 3px solid transparent;
+                display: flex;
+                align-items: center;
+                font-size: 0.9rem;
+            }
+
+            .nav-item:hover,
+            .nav-item.active {
+                color: #fff;
+                background: rgba(0, 255, 65, 0.1);
+                border-left: 3px solid var(--primary-color);
+            }
+
+            .nav-item i {
+                margin-right: 12px;
+                width: 20px;
+                text-align: center;
+            }
+
+            .sidebar-footer {
+                margin-top: auto;
+                padding-top: 20px;
+                border-top: 1px solid #333;
+            }
+
+            /* Main Content */
+            .main-content {
+                margin-left: 260px;
+                padding: 30px;
+                min-height: 100vh;
+            }
+
+            .header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 30px;
+                border-bottom: 1px solid #333;
+                padding-bottom: 20px;
+            }
+
+            .header h2 {
+                color: var(--primary-color);
+                text-shadow: var(--text-glow);
+            }
+
+            .status-indicator {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                padding: 8px 15px;
+                background: rgba(0, 255, 65, 0.1);
+                border: 1px solid var(--primary-color);
+            }
+
+            .blink {
+                width: 10px;
+                height: 10px;
+                background-color: var(--primary-color);
+                border-radius: 50%;
+                animation: blinker 1.5s linear infinite;
+            }
+
+            /* Cards Grid */
+            .stats-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 20px;
+                margin-bottom: 40px;
+            }
+
+            .card {
+                background: rgba(20, 20, 20, 0.9);
+                border: 1px solid #333;
+                padding: 25px;
+                border-radius: 5px;
+                position: relative;
+                transition: 0.3s;
+                overflow: hidden;
+            }
+
+            .card::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 2px;
+                background: linear-gradient(
+                    90deg,
+                    transparent,
+                    var(--primary-color),
+                    transparent
+                );
+            }
+
+            .card:hover {
+                transform: translateY(-5px);
+                border-color: var(--secondary-color);
+                box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+            }
+
+            .card-icon {
+                font-size: 2rem;
+                margin-bottom: 15px;
+                color: var(--secondary-color);
+            }
+
+            .card h3 {
+                font-size: 0.85rem;
+                color: #888;
+                margin-bottom: 10px;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }
+
+            .card .value {
+                font-size: 2.2rem;
+                font-weight: bold;
+                color: #fff;
+            }
+
+            .card .value.safe {
+                color: var(--primary-color);
+            }
+            .card .value.danger {
+                color: var(--danger-color);
+            }
+            .card .value.warning {
+                color: var(--warning-color);
+            }
+
+            /* --- EDUCATION SECTION --- */
+            .section-title {
+                font-size: 1.5rem;
+                color: var(--secondary-color);
+                margin-bottom: 25px;
+                padding-bottom: 10px;
+                border-left: 4px solid var(--primary-color);
+                padding-left: 15px;
+                text-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+            }
+
+            .education-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+                gap: 25px;
+                margin-bottom: 40px;
+            }
+
+            .edu-card {
+                background: rgba(15, 15, 15, 0.9);
+                border: 1px solid #333;
+                border-radius: 8px;
+                overflow: hidden;
+                transition: 0.3s;
+            }
+
+            .edu-card:hover {
+                border-color: var(--primary-color);
+                box-shadow: 0 0 20px rgba(0, 255, 65, 0.15);
+            }
+
+            .edu-header {
+                background: linear-gradient(
+                    135deg,
+                    rgba(0, 255, 65, 0.1),
+                    transparent
+                );
+                padding: 20px;
+                border-bottom: 1px solid #333;
+                display: flex;
+                align-items: center;
+                gap: 15px;
+            }
+
+            .edu-header i {
+                font-size: 1.5rem;
+                color: var(--primary-color);
+            }
+
+            .edu-header h4 {
+                font-size: 1.1rem;
+                color: #fff;
+            }
+
+            .edu-body {
+                padding: 20px;
+            }
+
+            .edu-body p {
+                color: #aaa;
+                line-height: 1.8;
+                font-size: 0.9rem;
+                margin-bottom: 15px;
+            }
+
+            .edu-body ul {
+                list-style: none;
+                padding: 0;
+            }
+
+            .edu-body ul li {
+                padding: 8px 0;
+                color: #ccc;
+                font-size: 0.85rem;
+                border-bottom: 1px solid #222;
+                display: flex;
+                align-items: center;
+            }
+
+            .edu-body ul li::before {
+                content: ">";
+                color: var(--primary-color);
+                margin-right: 10px;
+                font-weight: bold;
+            }
+
+            .edu-body ul li:last-child {
+                border-bottom: none;
+            }
+
+            /* Warning Box */
+            .warning-box {
+                background: rgba(255, 170, 0, 0.1);
+                border: 1px solid var(--warning-color);
+                padding: 15px;
+                border-radius: 5px;
+                margin-top: 15px;
+            }
+
+            .warning-box h5 {
+                color: var(--warning-color);
+                margin-bottom: 10px;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .warning-box p {
+                color: #ddd;
+                font-size: 0.85rem;
+            }
+
+            /* Tips List */
+            .tips-container {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 20px;
+                margin-bottom: 40px;
+            }
+
+            .tip-card {
+                background: rgba(20, 20, 20, 0.9);
+                border: 1px solid #333;
+                padding: 20px;
+                border-radius: 8px;
+                transition: 0.3s;
+            }
+
+            .tip-card:hover {
+                border-color: var(--secondary-color);
+            }
+
+            .tip-number {
+                display: inline-block;
+                width: 30px;
+                height: 30px;
+                background: var(--primary-color);
+                color: #000;
+                border-radius: 50%;
+                text-align: center;
+                line-height: 30px;
+                font-weight: bold;
+                margin-bottom: 10px;
+            }
+
+            .tip-card h4 {
+                color: #fff;
+                margin-bottom: 10px;
+            }
+
+            .tip-card p {
+                color: #888;
+                font-size: 0.85rem;
+                line-height: 1.6;
+            }
+
+            /* Terminal/Logs */
+            .terminal-section {
+                margin-bottom: 40px;
+            }
+
+            .terminal-window {
+                background: #0a0a0a;
+                border: 1px solid #333;
+                height: 250px;
+                padding: 15px;
+                font-family: "Courier New", monospace;
+                font-size: 0.85rem;
+                overflow: hidden;
+                position: relative;
+                border-radius: 5px;
+            }
+
+            .terminal-header {
+                display: flex;
+                gap: 6px;
+                margin-bottom: 15px;
+                border-bottom: 1px solid #333;
+                padding-bottom: 10px;
+            }
+
+            .dot {
+                width: 12px;
+                height: 12px;
+                border-radius: 50%;
+            }
+            .red {
+                background: #ff5f56;
+            }
+            .yellow {
+                background: #ffbd2e;
+            }
+            .green {
+                background: #27c93f;
+            }
+
+            .log-content {
+                color: #0f0;
+                opacity: 0.9;
+                line-height: 1.6;
+            }
+
+            .log-content span {
+                color: #fff;
+            }
+            .log-content .command {
+                color: var(--secondary-color);
+            }
+            .log-content .error {
+                color: var(--danger-color);
+            }
+            .log-content .success {
+                color: var(--primary-color);
+            }
+
+            /* Threat Level Indicator */
+            .threat-meter {
+                background: #1a1a1a;
+                height: 10px;
+                border-radius: 5px;
+                margin-top: 10px;
+                overflow: hidden;
+            }
+
+            .threat-level {
+                height: 100%;
+                background: linear-gradient(
+                    90deg,
+                    var(--primary-color),
+                    var(--warning-color),
+                    var(--danger-color)
+                );
+                width: 25%;
+                transition: 1s;
+            }
+
+            /* Interactive Quiz */
+            .quiz-container {
+                background: rgba(20, 20, 20, 0.9);
+                border: 1px solid var(--secondary-color);
+                padding: 25px;
+                border-radius: 8px;
+                margin-bottom: 40px;
+            }
+
+            .quiz-question {
+                font-size: 1.1rem;
+                color: #fff;
+                margin-bottom: 20px;
+            }
+
+            .quiz-options {
+                display: grid;
+                gap: 10px;
+            }
+
+            .quiz-option {
+                padding: 12px 15px;
+                background: rgba(0, 0, 0, 0.5);
+                border: 1px solid #333;
+                color: #ccc;
+                cursor: pointer;
+                transition: 0.3s;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .quiz-option:hover {
+                border-color: var(--primary-color);
+                background: rgba(0, 255, 65, 0.1);
+            }
+
+            .quiz-option.correct {
+                border-color: var(--primary-color);
+                background: rgba(0, 255, 65, 0.2);
+            }
+
+            .quiz-option.wrong {
+                border-color: var(--danger-color);
+                background: rgba(255, 0, 85, 0.2);
+            }
+
+            /* Footer */
+            .footer {
+                text-align: center;
+                padding: 30px;
+                border-top: 1px solid #333;
+                margin-top: 40px;
+                color: #555;
+            }
+
+            .footer a {
+                color: var(--primary-color);
+                text-decoration: none;
+            }
+
+            /* Responsive */
+            @media (max-width: 768px) {
+                .dashboard-container {
+                    grid-template-columns: 1fr;
+                }
+
+                .sidebar {
+                    position: relative;
+                    width: 100%;
+                    height: auto;
+                }
+
+                .main-content {
+                    margin-left: 0;
+                }
+
+                .education-grid {
+                    grid-template-columns: 1fr;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <!-- Background Canvas -->
+        <canvas id="canvas"></canvas>
+
+        <!-- LOGIN PAGE -->
+        <div id="login-page" class="login-container">
+            <h1 class="glitch" data-text="CYBERGUARD">CYBERAYEZ</h1>
+            <p style="margin-bottom: 30px; color: #888; letter-spacing: 2px">
+                ADVANCED CYBERSECURITY BINPRESSA
+            </p>
+
+            <div class="cyber-box">
+                <h2><i class="fas fa-shield-alt"></i> SECURE ACCESS</h2>
+                <form id="loginForm">
+                    <div class="input-group">
+                        <i class="fas fa-user"></i>
+                        <input
+                            type="text"
+                            id="username"
+                            placeholder="Username"
+                            required
+                        />
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input
+                            type="password"
+                            id="password"
+                            placeholder="Password"
+                            required
+                        />
+                    </div>
+                    <button type="submit" class="cyber-btn">
+                        INITIALIZE SYSTEM
+                    </button>
+                </form>
+                <p
+                    style="
+                        text-align: center;
+                        margin-top: 20px;
+                        font-size: 0.8rem;
+                        color: #555;
+                    "
+                >
+                    <i class="fas fa-info-circle"></i> Gunakan username dan
+                    password
+                </p>
+            </div>
+        </div>
+
+        <!-- DASHBOARD PAGE (Hidden initially) -->
+        <div id="dashboard-page" class="dashboard-container hidden">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <div class="logo">
+                    <i class="fas fa-microchip"></i> CYBERAYEZ
+                </div>
+                <div class="nav-item active" onclick="showSection('overview')">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </div>
+                <div class="nav-item" onclick="showSection('materi')">
+                    <i class="fas fa-book"></i> Materi Cyber Security
+                </div>
+                <div class="nav-item" onclick="showSection('ancaman')">
+                    <i class="fas fa-exclamation-triangle"></i> Jenis Ancaman
+                </div>
+                <div class="nav-item" onclick="showSection('tips')">
+                    <i class="fas fa-lightbulb"></i> Tips Keamanan
+                </div>
+                <div class="nav-item" onclick="showSection('quiz')">
+                    <i class="fas fa-question-circle"></i> Kuis Interaktif
+                </div>
+                <div class="sidebar-footer">
+                    <div
+                        class="nav-item"
+                        onclick="logout()"
+                        style="color: var(--danger-color)"
+                    >
+                        <i class="fas fa-power-off"></i> Logout
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="main-content">
+                <div class="header">
+                    <h2 id="page-title">SYSTEM OVERVIEW</h2>
+                    <div class="status-indicator">
+                        <div class="blink"></div>
+                        <span style="font-size: 0.8rem">SYSTEM ACTIVE</span>
+                    </div>
+                </div>
+
+                <!-- SECTION: OVERVIEW -->
+                <div id="section-overview">
+                    <div class="stats-grid">
+                        <div class="card">
+                            <i class="fas fa-shield-alt card-icon"></i>
+                            <h3>Proteksi Aktif</h3>
+                            <div class="value safe">24/7</div>
+                            <p
+                                style="
+                                    color: #666;
+                                    font-size: 0.8rem;
+                                    margin-top: 10px;
+                                "
+                            >
+                                Pemantauan tanpa henti
+                            </p>
+                        </div>
+                        <div class="card">
+                            <i
+                                class="fas fa-bug card-icon"
+                                style="color: var(--danger-color)"
+                            ></i>
+                            <h3>Ancaman Diblokir</h3>
+                            <div class="value danger">1,247</div>
+                            <div class="threat-meter">
+                                <div
+                                    class="threat-level"
+                                    style="width: 75%"
+                                ></div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <i
+                                class="fas fa-lock card-icon"
+                                style="color: var(--secondary-color)"
+                            ></i>
+                            <h3>Enkripsi Data</h3>
+                            <div class="value warning">256-bit</div>
+                            <p
+                                style="
+                                    color: #666;
+                                    font-size: 0.8rem;
+                                    margin-top: 10px;
+                                "
+                            >
+                                AES-256 Encryption
+                            </p>
+                        </div>
+                        <div class="card">
+                            <i class="fas fa-users card-icon"></i>
+                            <h3>Pengguna Terlindungi</h3>
+                            <div class="value safe">8,592</div>
+                            <p
+                                style="
+                                    color: #666;
+                                    font-size: 0.8rem;
+                                    margin-top: 10px;
+                                "
+                            >
+                                Di seluruh jaringan
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="terminal-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-terminal"></i> SYSTEM LOGS
+                        </h3>
+                        <div class="terminal-window">
+                            <div class="terminal-header">
+                                <div class="dot red"></div>
+                                <div class="dot yellow"></div>
+                                <div class="dot green"></div>
+                            </div>
+                            <div class="log-content" id="terminal-logs">
+                                <span class="command">root@cyberguard:~#</span>
+                                system --check<br />
+                                <span class="success">[OK]</span> Firewall aktif
+                                dan berjalan<br />
+                                <span class="success">[OK]</span> Database
+                                terenkripsi<br />
+                                <span class="success">[OK]</span> SSL
+                                Certificate valid<br />
+                                <span class="command">root@cyberguard:~#</span>
+                                scan --threats<br />
+                                <span class="success">[SECURE]</span> Tidak ada
+                                malware terdeteksi<br />
+                                <span class="command">root@cyberayez:~#</span>
+                                update --security<br />
+                                <span class="success">[DONE]</span> Patch
+                                keamanan terbaru diinstal<br />
+                                <span class="error">[WARNING]</span> Percobaan
+                                login mencurigakan dari IP 192.168.1.xxx<br />
+                                <span class="success">[BLOCKED]</span> Ancaman
+                                otomatis diblokir<br />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION: MATERI -->
+                <div id="section-materi" class="hidden">
+                    <h3 class="section-title">
+                        <i class="fas fa-book"></i> PENGENALAN CYBER SECURITY
+                    </h3>
+
+                    <div class="education-grid">
+                        <div class="edu-card">
+                            <div class="edu-header">
+                                <i class="fas fa-lock"></i>
+                                <h4>Apa itu Cyber Security?</h4>
+                            </div>
+                            <div class="edu-body">
+                                <p>
+                                    Cyber Security adalah praktik melindungi
+                                    sistem komputer, jaringan, dan data dari
+                                    serangan digital. Tujuannya adalah menjaga
+                                    kerahasiaan, integritas, dan ketersediaan
+                                    informasi.
+                                </p>
+                                <p>
+                                    Dalam era digital, keamanan siber menjadi
+                                    sangat penting karena hampir semua aspek
+                                    kehidupan kita terhubung dengan internet.
+                                </p>
+                                <div class="warning-box">
+                                    <h5>
+                                        <i
+                                            class="fas fa-exclamation-triangle"
+                                        ></i>
+                                        Fakta
+                                    </h5>
+                                    <p>
+                                        Kerugian akibat kejahatan siber di
+                                        seluruh dunia diprediksi mencapai
+                                        triliunan dolar per tahun.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="edu-card">
+                            <div class="edu-header">
+                                <i class="fas fa-shield-alt"></i>
+                                <h4>Tiga Pilar Keamanan</h4>
+                            </div>
+                            <div class="edu-body">
+                                <ul>
+                                    <li>
+                                        <strong
+                                            >Confidentiality
+                                            (Kerahasiaan)</strong
+                                        >
+                                        - Hanya pihak berwenang yang dapat
+                                        mengakses informasi
+                                    </li>
+                                    <li>
+                                        <strong>Integrity (Integritas)</strong>
+                                        - Data tidak diubah atau dimodifikasi
+                                        tanpa izin
+                                    </li>
+                                    <li>
+                                        <strong
+                                            >Availability (Ketersediaan)</strong
+                                        >
+                                        - Sistem dan data tersedia saat
+                                        dibutuhkan
+                                    </li>
+                                </ul>
+                                <div class="warning-box">
+                                    <h5>
+                                        <i class="fas fa-info-circle"></i> CIA
+                                        Triad
+                                    </h5>
+                                    <p>
+                                        Konsep ini dikenal sebagai "CIA Triad"
+                                        dan menjadi dasar dalam merancang sistem
+                                        keamanan.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="edu-card">
+                            <div class="edu-header">
+                                <i class="fas fa-key"></i>
+                                <h4>Kriptografi & Enkripsi</h4>
+                            </div>
+                            <div class="edu-body">
+                                <p>
+                                    Kriptografi adalah ilmu untuk mengamankan
+                                    komunikasi dan data melalui kode. Enkripsi
+                                    mengubah data menjadi format yang tidak
+                                    dapat dibaca tanpa kunci dekripsi.
+                                </p>
+                                <ul>
+                                    <li>
+                                        <strong>Symmetric</strong> - Satu kunci
+                                        untuk enkripsi dan dekripsi
+                                    </li>
+                                    <li>
+                                        <strong>Asymmetric</strong> - Pasangan
+                                        kunci publik dan privat
+                                    </li>
+                                    <li>
+                                        <strong>Hashing</strong> - Proses satu
+                                        arah untuk verifikasi data
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="edu-card">
+                            <div class="edu-header">
+                                <i class="fas fa-fire"></i>
+                                <h4>Firewall</h4>
+                            </div>
+                            <div class="edu-body">
+                                <p>
+                                    Firewall adalah sistem keamanan yang
+                                    memantau dan mengontrol lalu lintas jaringan
+                                    berdasarkan aturan keamanan yang ditentukan.
+                                    Firewall bertindak sebagai penghalang antara
+                                    jaringan internal dan internet.
+                                </p>
+                                <ul>
+                                    <li>
+                                        <strong>Packet Filtering</strong> -
+                                        Memeriksa setiap paket data
+                                    </li>
+                                    <li>
+                                        <strong>Stateful Inspection</strong> -
+                                        Melacak koneksi aktif
+                                    </li>
+                                    <li>
+                                        <strong>Proxy Firewall</strong> -
+                                        Menjadi perantara komunikasi
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="edu-card">
+                            <div class="edu-header">
+                                <i class="fas fa-user-secret"></i>
+                                <h4>White Hat vs Black Hat</h4>
+                            </div>
+                            <div class="edu-body">
+                                <p>
+                                    Dalam dunia keamanan siber, hacker
+                                    dikategorikan berdasarkan niat dan
+                                    tindakannya:
+                                </p>
+                                <ul>
+                                    <li>
+                                        <strong>White Hat</strong> - Hacker etis
+                                        yang membantu keamanan
+                                    </li>
+                                    <li>
+                                        <strong>Black Hat</strong> - Hacker
+                                        kriminal yang merusak
+                                    </li>
+                                    <li>
+                                        <strong>Grey Hat</strong> - Gabungan
+                                        keduanya
+                                    </li>
+                                    <li>
+                                        <strong>Script Kiddie</strong> - Pemula
+                                        tanpa pemahaman mendalam
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="edu-card">
+                            <div class="edu-header">
+                                <i class="fas fa-certificate"></i>
+                                <h4>Sertifikasi Keamanan</h4>
+                            </div>
+                            <div class="edu-body">
+                                <p>
+                                    Profesi keamanan siber membutuhkan
+                                    sertifikasi profesional untuk memvalidasi
+                                    keahlian:
+                                </p>
+                                <ul>
+                                    <li>
+                                        <strong>CompTIA Security+</strong> -
+                                        Dasar keamanan
+                                    </li>
+                                    <li>
+                                        <strong
+                                            >CEH (Certified Ethical
+                                            Hacker)</strong
+                                        >
+                                        - Hacking etis
+                                    </li>
+                                    <li>
+                                        <strong>CISSP</strong> - Keamanan
+                                        tingkat lanjut
+                                    </li>
+                                    <li>
+                                        <strong>CISM</strong> - Manajemen
+                                        keamanan
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION: ANCAMAN -->
+                <div id="section-ancaman" class="hidden">
+                    <h3 class="section-title">
+                        <i class="fas fa-exclamation-triangle"></i> JENIS-JENIS
+                        ANCAMAN CYBER
+                    </h3>
+
+                    <div class="education-grid">
+                        <div class="edu-card">
+                            <div
+                                class="edu-header"
+                                style="background: rgba(255, 0, 85, 0.1)"
+                            >
+                                <i
+                                    class="fas fa-virus"
+                                    style="color: var(--danger-color)"
+                                ></i>
+                                <h4>Malware</h4>
+                            </div>
+                            <div class="edu-body">
+                                <p>
+                                    Malware adalah perangkat lunak berbahaya
+                                    yang dirancang untuk merusak atau mengakses
+                                    sistem tanpa izin. Jenis-jenisnya meliputi:
+                                </p>
+                                <ul>
+                                    <li>
+                                        <strong>Virus</strong> - Menyebar dengan
+                                        menggabungkan diri ke program lain
+                                    </li>
+                                    <li>
+                                        <strong>Trojan</strong> - Menyamar
+                                        sebagai perangkat lunak合法
+                                    </li>
+                                    <li>
+                                        <strong>Ransomware</strong> -
+                                        Mengenkripsi data dan meminta tebusan
+                                    </li>
+                                    <li>
+                                        <strong>Spyware</strong> - Mengintai
+                                        aktivitas pengguna
+                                    </li>
+                                    <li>
+                                        <strong>Adware</strong> - Menampilkan
+                                        iklan yang tidak diinginkan
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="edu-card">
+                            <div
+                                class="edu-header"
+                                style="background: rgba(255, 170, 0, 0.1)"
+                            >
+                                <i
+                                    class="fas fa-fishing"
+                                    style="color: var(--warning-color)"
+                                ></i>
+                                <h4>Phishing</h4>
+                            </div>
+                            <div class="edu-body">
+                                <p>
+                                    Phishing adalah teknik penipuan di mana
+                                    penyerang menyamar sebagai entitas
+                                    terpercaya untuk mencuri data sensitif
+                                    seperti kata sandi dan informasi kartu
+                                    kredit.
+                                </p>
+                                <div class="warning-box">
+                                    <h5>
+                                        <i
+                                            class="fas fa-exclamation-triangle"
+                                        ></i>
+                                        Ciri-ciri Phishing
+                                    </h5>
+                                    <p>
+                                        • Alamat pengirim yang mencurigakan<br />
+                                        - Tata bahasa yang buruk<br />
+                                        - Permintaan mendesak untuk data
+                                        pribadi<br />
+                                        - Tautan yang mencurigakan
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="edu-card">
+                            <div class="edu-header">
+                                <i class="fas fa-network-wired"></i>
+                                <h4>Man-in-the-Middle (MitM)</h4>
+                            </div>
+                            <div class="edu-body">
+                                <p>
+                                    Serangan MitM terjadi ketika penyerang
+                                    secara diam-diam menyadap dan mungkin
+                                    mengubah komunikasi antara dua pihak yang
+                                    percaya bahwa mereka berkomunikasi secara
+                                    langsung.
+                                </p>
+                                <ul>
+                                    <li>
+                                        <strong>Session Hijacking</strong> -
+                                        Mengambil alih sesi pengguna
+                                    </li>
+                                    <li>
+                                        <strong>DNS Spoofing</strong> -
+                                        Mengalihkan ke situs palsu
+                                    </li>
+                                    <li>
+                                        <strong>SSL Stripping</strong> -
+                                        Menurunkan koneksi HTTPS ke HTTP
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="edu-card">
+                            <div
+                                class="edu-header"
+                                style="background: rgba(255, 0, 85, 0.1)"
+                            >
+                                <i
+                                    class="fas fa-bomb"
+                                    style="color: var(--danger-color)"
+                                ></i>
+                                <h4>Denial of Service (DoS)</h4>
+                            </div>
+                            <div class="edu-body">
+                                <p>
+                                    Serangan DoS bertujuan membuat sistem atau
+                                    jaringan tidak tersedia bagi pengguna dengan
+                                    membanjiri lalu lintas atau mengirim data
+                                    yang menyebabkan kerusakan.
+                                </p>
+                                <ul>
+                                    <li>
+                                        <strong>UDP Flood</strong> - Membanjiri
+                                        dengan paket UDP
+                                    </li>
+                                    <li>
+                                        <strong>ICMP Flood</strong> - Membanjiri
+                                        permintaan ping
+                                    </li>
+                                    <li>
+                                        <strong>SYN Flood</strong> - Menyerang
+                                        handshake TCP
+                                    </li>
+                                </ul>
+                                <div class="warning-box">
+                                    <h5>
+                                        <i class="fas fa-info-circle"></i> DDoS
+                                    </h5>
+                                    <p>
+                                        Distributed DoS (DDoS) menggunakan
+                                        banyak komputer yang dikompromikan untuk
+                                        menyerang secara bersamaan.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="edu-card">
+                            <div class="edu-header">
+                                <i class="fas fa-code"></i>
+                                <h4>SQL Injection</h4>
+                            </div>
+                            <div class="edu-body">
+                                <p>
+                                    SQL Injection adalah teknik menyuntikkan
+                                    kode SQL berbahaya melalui input pengguna
+                                    yang tidak divalidasi. Ini dapat menyebabkan
+                                    pencurian, modifikasi, atau penghapusan
+                                    data.
+                                </p>
+                                <div class="warning-box">
+                                    <h5>
+                                        <i class="fas fa-shield-alt"></i>
+                                        Pencegahan
+                                    </h5>
+                                    <p>
+                                        • Gunakan Prepared Statements<br />
+                                        - Validasi input pengguna<br />
+                                        - Batasi hak akses database<br />
+                                        - Update sistem secara berkala
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="edu-card">
+                            <div class="edu-header">
+                                <i class="fas fa-wifi"></i>
+                                <h4>Serangan Wi-Fi</h4>
+                            </div>
+                            <div class="edu-body">
+                                <p>
+                                    Jaringan nirkabel rentan terhadap berbagai
+                                    serangan jika tidak diamankan dengan baik:
+                                </p>
+                                <ul>
+                                    <li>
+                                        <strong>Evil Twin</strong> - Access
+                                        point palsu
+                                    </li>
+                                    <li>
+                                        <strong>Packet Sniffing</strong> -
+                                        Menyadap lalu lintas
+                                    </li>
+                                    <li>
+                                        <strong>WEP/WPA Cracking</strong> -
+                                        Membobol enkripsi Wi-Fi
+                                    </li>
+                                    <li>
+                                        <strong>Sidejacking</strong> - Mencuri
+                                        cookie sesi
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION: TIPS -->
+                <div id="section-tips" class="hidden">
+                    <h3 class="section-title">
+                        <i class="fas fa-lightbulb"></i> TIPS KEAMANAN CYBER
+                    </h3>
+
+                    <div class="tips-container">
+                        <div class="tip-card">
+                            <span class="tip-number">1</span>
+                            <h4>Gunakan Password Kuat</h4>
+                            <p>
+                                Buat password minimal 12 karakter dengan
+                                kombinasi huruf besar, kecil, angka, dan simbol.
+                                Hindari menggunakan informasi pribadi atau
+                                kata-kata umum.
+                            </p>
+                        </div>
+
+                        <div class="tip-card">
+                            <span class="tip-number">2</span>
+                            <h4>Aktifkan 2FA (Two-Factor Authentication)</h4>
+                            <p>
+                                Tambahkan lapisan keamanan tambahan dengan
+                                verifikasi dua langkah. Bahkan jika password
+                                bocor, akun tetap aman.
+                            </p>
+                        </div>
+
+                        <div class="tip-card">
+                            <span class="tip-number">3</span>
+                            <h4>Update Sistem Secara Berkala</h4>
+                            <p>
+                                Selalu update sistem operasi, aplikasi, dan
+                                antivirus. Update sering mengandung patch
+                                keamanan untuk kerentanan yang baru ditemukan.
+                            </p>
+                        </div>
+
+                        <div class="tip-card">
+                            <span class="tip-number">4</span>
+                            <h4>Hati-hati dengan Email</h4>
+                            <p>
+                                Jangan klik tautan atau unduh lampiran dari
+                                pengirim yang tidak dikenal. Periksa alamat
+                                pengirim dengan teliti.
+                            </p>
+                        </div>
+
+                        <div class="tip-card">
+                            <span class="tip-number">5</span>
+                            <h4>Gunakan VPN di Wi-Fi Publik</h4>
+                            <p>
+                                VPN mengenkripsi koneksi internet Anda,
+                                melindungi data dari penyadapan saat menggunakan
+                                Wi-Fi publik.
+                            </p>
+                        </div>
+
+                        <div class="tip-card">
+                            <span class="tip-number">6</span>
+                            <h4>Backup Data Secara Rutin</h4>
+                            <p>
+                                Simpan backup data di lokasi terpisah. Ini
+                                melindungi dari ransomware dan kehilangan data
+                                akibat kerusakan perangkat.
+                            </p>
+                        </div>
+
+                        <div class="tip-card">
+                            <span class="tip-number">7</span>
+                            <h4>Periksa Sertifikat SSL</h4>
+                            <p>
+                                Pastikan website menggunakan HTTPS (gembok di
+                                address bar) sebelum memasukkan data sensitif.
+                                Hindari transaksi di website tanpa SSL.
+                            </p>
+                        </div>
+
+                        <div class="tip-card">
+                            <span class="tip-number">8</span>
+                            <h4>Kunci Layar Otomatis</h4>
+                            <p>
+                                Aktifkan kunci layar otomatis pada perangkat
+                                Anda. Ini mencegah akses tidak sah jika
+                                perangkat ditinggalkan tanpa pengawasan.
+                            </p>
+                        </div>
+
+                        <div class="tip-card">
+                            <span class="tip-number">9</span>
+                            <h4>Review Izin Aplikasi</h4>
+                            <p>
+                                Periksa izin yang diminta aplikasi sebelum
+                                menginstal. Jangan berikan akses yang tidak
+                                diperlukan seperti kamera, mikrofon, atau
+                                lokasi.
+                            </p>
+                        </div>
+
+                        <div class="tip-card">
+                            <span class="tip-number">10</span>
+                            <h4>Gunakan Password Manager</h4>
+                            <p>
+                                Password manager membantu membuat dan menyimpan
+                                password unik untuk setiap akun tanpa perlu
+                                mengingat semuanya.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div
+                        class="card"
+                        style="
+                            margin-top: 20px;
+                            border-color: var(--primary-color);
+                        "
+                    >
+                        <h3
+                            style="
+                                color: var(--primary-color);
+                                margin-bottom: 15px;
+                            "
+                        >
+                            <i class="fas fa-shield-alt"></i> CHECKLIST KEAMANAN
+                            PRIBADI
+                        </h3>
+                        <div
+                            style="
+                                display: grid;
+                                grid-template-columns: repeat(
+                                    auto-fit,
+                                    minmax(250px, 1fr)
+                                );
+                                gap: 15px;
+                            "
+                        >
+                            <div
+                                style="
+                                    display: flex;
+                                    align-items: center;
+                                    gap: 10px;
+                                "
+                            >
+                                <i
+                                    class="fas fa-check-circle"
+                                    style="color: var(--primary-color)"
+                                ></i>
+                                <span
+                                    >Password sudah diubah dalam 3 bulan
+                                    terakhir</span
+                                >
+                            </div>
+                            <div
+                                style="
+                                    display: flex;
+                                    align-items: center;
+                                    gap: 10px;
+                                "
+                            >
+                                <i
+                                    class="fas fa-check-circle"
+                                    style="color: var(--primary-color)"
+                                ></i>
+                                <span>2FA aktif di akun penting</span>
+                            </div>
+                            <div
+                                style="
+                                    display: flex;
+                                    align-items: center;
+                                    gap: 10px;
+                                "
+                            >
+                                <i
+                                    class="fas fa-check-circle"
+                                    style="color: var(--primary-color)"
+                                ></i>
+                                <span>Software selalu update</span>
+                            </div>
+                            <div
+                                style="
+                                    display: flex;
+                                    align-items: center;
+                                    gap: 10px;
+                                "
+                            >
+                                <i
+                                    class="fas fa-check-circle"
+                                    style="color: var(--primary-color)"
+                                ></i>
+                                <span>Data sudah di-backup</span>
+                            </div>
+                            <div
+                                style="
+                                    display: flex;
+                                    align-items: center;
+                                    gap: 10px;
+                                "
+                            >
+                                <i
+                                    class="fas fa-check-circle"
+                                    style="color: var(--primary-color)"
+                                ></i>
+                                <span
+                                    >Tidak menggunakan Wi-Fi publik tanpa
+                                    VPN</span
+                                >
+                            </div>
+                            <div
+                                style="
+                                    display: flex;
+                                    align-items: center;
+                                    gap: 10px;
+                                "
+                            >
+                                <i
+                                    class="fas fa-check-circle"
+                                    style="color: var(--primary-color)"
+                                ></i>
+                                <span>Email mencurigakan tidak diklik</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION: QUIZ -->
+                <div id="section-quiz" class="hidden">
+                    <h3 class="section-title">
+                        <i class="fas fa-question-circle"></i> KUIS INTERAKTIF
+                        CYBER SECURITY
+                    </h3>
+
+                    <div class="quiz-container">
+                        <div id="quiz-content">
+                            <p class="quiz-question" id="question-text">
+                                Loading question...
+                            </p>
+                            <div class="quiz-options" id="quiz-options">
+                                <!-- Options will be generated by JavaScript -->
+                            </div>
+                            <p
+                                style="
+                                    margin-top: 20px;
+                                    color: #888;
+                                    font-size: 0.9rem;
+                                "
+                            >
+                                Skor Anda:
+                                <span
+                                    id="score"
+                                    style="
+                                        color: var(--primary-color);
+                                        font-weight: bold;
+                                    "
+                                    >0</span
+                                >
+                                / <span id="total">0</span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="terminal-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-trophy"></i> FAKTA MENARIK
+                        </h3>
+                        <div class="terminal-window">
+                            <div class="terminal-header">
+                                <div class="dot red"></div>
+                                <div class="dot yellow"></div>
+                                <div class="dot green"></div>
+                            </div>
+                            <div class="log-content">
+                                <span class="command">root@cyberguard:~#</span>
+                                facts --interesting<br /><br />
+                                <span>[FACT 1]</span> Serangan cyber pertama
+                                terjadi pada tahun 1988 (Morris Worm)<br />
+                                <span>[FACT 2]</span> 95% breach keamanan
+                                disebabkan oleh kesalahan manusia<br />
+                                <span>[FACT 3]</span> "Password" adalah password
+                                paling populer di dunia<br />
+                                <span>[FACT 4]</span> Ransomware attack terjadi
+                                setiap 11 detik<br />
+                                <span>[FACT 5]</span> Indonesia termasuk top 5
+                                negara dengan serangan phishing tertinggi<br />
+                                <span>[FACT 6]</span> Biaya rata-rata breach
+                                data mencapai $4.45 juta<br />
+                                <span>[FACT 7]</span> 81% organisasi mengalami
+                                serangan via email<br />
+                                <span>[FACT 8]</span> Penggunaan VPN meningkat
+                                300% sejak pandemi<br />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div class="footer">
+                    <p>
+                        <i class="fas fa-graduation-cap"></i> CYBERGUARD
+                        EDUCATION PLATFORM
+                    </p>
+                    <p style="margin-top: 10px; font-size: 0.8rem">
+                        Platform edukasi keamanan siber untuk pembelajaran dan
+                        kesadaran<br />
+                        <a href="#">Tentang Kami</a> | <a href="#">Kontak</a> |
+                        <a href="#">Privasi</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            // --- MATRIX RAIN EFFECT ---
+            const canvas = document.getElementById("canvas");
+            const ctx = canvas.getContext("2d");
+
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const characters =
+                "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()_+";
+            const fontSize = 14;
+            const columns = canvas.width / fontSize;
+            const drops = [];
+
+            for (let i = 0; i < columns; i++) {
+                drops[i] = 1;
+            }
+
+            function drawMatrix() {
+                ctx.fillStyle = "rgba(5, 5, 5, 0.05)";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                ctx.fillStyle = "#0f0";
+                ctx.font = fontSize + "px monospace";
+
+                for (let i = 0; i < drops.length; i++) {
+                    const text = characters.charAt(
+                        Math.floor(Math.random() * characters.length)
+                    );
+                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                    if (
+                        drops[i] * fontSize > canvas.height &&
+                        Math.random() > 0.975
+                    ) {
+                        drops[i] = 0;
+                    }
+                    drops[i]++;
+                }
+            }
+
+            setInterval(drawMatrix, 50);
+
+            window.addEventListener("resize", () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
+
+            // --- LOGIN SYSTEM ---
+            document
+                .getElementById("loginForm")
+                .addEventListener("submit", function (e) {
+                    e.preventDefault();
+
+                    const username = document.getElementById("username").value;
+                    const password = document.getElementById("password").value;
+
+                    if (username && password) {
+                        // Simulate login
+                        const btn = this.querySelector("button");
+                        btn.innerHTML =
+                            '<i class="fas fa-spinner fa-spin"></i> AUTHENTICATING...';
+
+                        setTimeout(() => {
+                            document
+                                .getElementById("login-page")
+                                .classList.add("hidden");
+                            document
+                                .getElementById("dashboard-page")
+                                .classList.remove("hidden");
+                            initQuiz();
+                        }, 1500);
+                    }
+                });
+
+            function logout() {
+                document
+                    .getElementById("dashboard-page")
+                    .classList.add("hidden");
+                document
+                    .getElementById("login-page")
+                    .classList.remove("hidden");
+                document
+                    .getElementById("loginForm")
+                    .querySelector("button").innerHTML = "INITIALIZE SYSTEM";
+                document.getElementById("username").value = "";
+                document.getElementById("password").value = "";
+            }
+
+            // --- NAVIGATION ---
+            function showSection(section) {
+                // Hide all sections
+                const sections = [
+                    "overview",
+                    "materi",
+                    "ancaman",
+                    "tips",
+                    "quiz"
+                ];
+                sections.forEach(s => {
+                    document
+                        .getElementById("section-" + s)
+                        .classList.add("hidden");
+                });
+
+                // Show selected section
+                document
+                    .getElementById("section-" + section)
+                    .classList.remove("hidden");
+
+                // Update nav items
+                document.querySelectorAll(".nav-item").forEach(item => {
+                    item.classList.remove("active");
+                });
+                event.currentTarget.classList.add("active");
+
+                // Update page title
+                const titles = {
+                    overview: "SYSTEM OVERVIEW",
+                    materi: "MATERI CYBER SECURITY",
+                    ancaman: "JENIS ANCAMAN CYBER",
+                    tips: "TIPS KEAMANAN",
+                    quiz: "KUIS INTERAKTIF"
+                };
+                document.getElementById("page-title").textContent =
+                    titles[section];
+            }
+
+            // --- QUIZ SYSTEM ---
+            const questions = [
+                {
+                    question: "Apa yang dimaksud dengan Phishing?",
+                    options: [
+                        "Teknik memancing ikan di sungai",
+                        "Serangan cyber yang menyamar sebagai entitas terpercaya untuk mencuri data",
+                        "Metode enkripsi data",
+                        "Jenis antivirus"
+                    ],
+                    correct: 1
+                },
+                {
+                    question: "Manakah yang merupakan contoh Malware?",
+                    options: [
+                        "Firewall",
+                        "VPN",
+                        "Ransomware",
+                        "SSL Certificate"
+                    ],
+                    correct: 2
+                },
+                {
+                    question: "Apa kepanjangan dari DDoS?",
+                    options: [
+                        "Data Distribution of Security",
+                        "Distributed Denial of Service",
+                        "Digital Data Online System",
+                        "Dynamic Domain Operating System"
+                    ],
+                    correct: 1
+                },
+                {
+                    question: "Apa fungsi utama Firewall?",
+                    options: [
+                        "Mengenkripsi data",
+                        "Memantau dan mengontrol lalu lintas jaringan",
+                        "Membackup data",
+                        "Membuat password"
+                    ],
+                    correct: 1
+                },
+                {
+                    question: "Apa yang dimaksud dengan 2FA?",
+                    options: [
+                        "Two-Factor Authentication",
+                        "Two-Function Access",
+                        "Two-File Authentication",
+                        "Two-Factor Access"
+                    ],
+                    correct: 0
+                },
+                {
+                    question: "Serangan SQL Injection bertujuan untuk?",
+                    options: [
+                        "Memperlambat koneksi internet",
+                        "Mencuri atau memodifikasi data database",
+                        "Memblokir email spam",
+                        "Memperbarui sistem operasi"
+                    ],
+                    correct: 1
+                },
+                {
+                    question:
+                        "Apa yang harus dilakukan untuk membuat password yang kuat?",
+                    options: [
+                        "Menggunakan tanggal lahir",
+                        "Menggunakan kombinasi huruf, angka, dan simbol",
+                        "Menggunakan nama hewan peliharaan",
+                        "Menggunakan satu password untuk semua akun"
+                    ],
+                    correct: 1
+                },
+                {
+                    question:
+                        "Apa kepanjangan dari CIA dalam keamanan informasi?",
+                    options: [
+                        "Central Intelligence Agency",
+                        "Confidentiality, Integrity, Availability",
+                        "Computer Internet Access",
+                        "Cyber Information Analysis"
+                    ],
+                    correct: 1
+                }
+            ];
+
+            let currentQuestion = 0;
+            let score = 0;
+
+            function initQuiz() {
+                currentQuestion = 0;
+                score = 0;
+                document.getElementById("score").textContent = score;
+                document.getElementById("total").textContent = questions.length;
+                showQuestion();
+            }
+
+            function showQuestion() {
+                const q = questions[currentQuestion];
+                document.getElementById("question-text").textContent = `(${
+                    currentQuestion + 1
+                }/${questions.length}) ${q.question}`;
+
+                const optionsContainer =
+                    document.getElementById("quiz-options");
+                optionsContainer.innerHTML = "";
+
+                q.options.forEach((option, index) => {
+                    const div = document.createElement("div");
+                    div.className = "quiz-option";
+                    div.innerHTML = `<span style="color: var(--primary-color); font-weight: bold;">[${String.fromCharCode(
+                        65 + index
+                    )}]</span> ${option}`;
+                    div.onclick = () => checkAnswer(index);
+                    optionsContainer.appendChild(div);
+                });
+            }
+
+            function checkAnswer(selectedIndex) {
+                const q = questions[currentQuestion];
+                const options = document.querySelectorAll(".quiz-option");
+
+                options.forEach((opt, index) => {
+                    opt.style.pointerEvents = "none";
+                    if (index === q.correct) {
+                        opt.classList.add("correct");
+                    } else if (
+                        index === selectedIndex &&
+                        selectedIndex !== q.correct
+                    ) {
+                        opt.classList.add("wrong");
+                    }
+                });
+
+                if (selectedIndex === q.correct) {
+                    score++;
+                    document.getElementById("score").textContent = score;
+                }
+
+                setTimeout(() => {
+                    currentQuestion++;
+                    if (currentQuestion < questions.length) {
+                        showQuestion();
+                    } else {
+                        showResult();
+                    }
+                }, 1500);
+            }
+
+            function showResult() {
+                const container = document.getElementById("quiz-content");
+                const percentage = (score / questions.length) * 100;
+                let message = "";
+                let color = "";
+
+                if (percentage >= 80) {
+                    message =
+                        "LUAR BIASA! Anda memiliki pengetahuan cyber security yang sangat baik!";
+                    color = "var(--primary-color)";
+                } else if (percentage >= 60) {
+                    message =
+                        "BAGUS! Terus tingkatkan pengetahuan keamanan Anda!";
+                    color = "var(--secondary-color)";
+                } else {
+                    message =
+                        "SEMANGAT! Pelajari lagi materi yang tersedia dan coba lagi!";
+                    color = "var(--warning-color)";
+                }
+
+                container.innerHTML = `
+                <div style="text-align: center; padding: 30px;">
+                    <i class="fas fa-trophy" style="font-size: 4rem; color: ${color}; margin-bottom: 20px;"></i>
+                    <h3 style="color: #fff; margin-bottom: 15px;">KUIS SELESAI!</h3>
+                    <p style="font-size: 1.5rem; color: ${color}; margin-bottom: 20px;">Skor: ${score} / ${questions.length}</p>
+                    <p style="color: #888; margin-bottom: 30px;">${message}</p>
+                    <button class="cyber-btn" onclick="initQuiz()" style="width: auto; padding: 12px 30px;">
+                        <i class="fas fa-redo"></i> COBA LAGI
+                    </button>
+                </div>
+            `;
+            }
+
+            // --- TERMINAL LOGS ANIMATION ---
+            function addLog() {
+                const logs = [
+                    '<span class="success">[OK]</span> Sistem memeriksa integritas file...',
+                    '<span class="success">[SECURE]</span> Tidak ada ancaman baru terdeteksi',
+                    '<span class="command">root@cyberguard:~#</span> scan --vulnerabilities',
+                    '<span class="success">[DONE]</span> Pemindaian selesai dalam 0.3ms',
+                    '<span class="warning">[INFO]</span> Update keamanan tersedia',
+                    '<span class="success">[OK]</span> Koneksi terenkripsi (AES-256)',
+                    '<span class="command">root@cyberguard:~#</span> monitor --traffic',
+                    '<span class="success">[SECURE]</span> Tidak ada aktivitas mencurigakan'
+                ];
+
+                const terminal = document.getElementById("terminal-logs");
+                const randomLog = logs[Math.floor(Math.random() * logs.length)];
+
+                const div = document.createElement("div");
+                div.innerHTML = randomLog;
+                terminal.appendChild(div);
+                terminal.scrollTop = terminal.scrollHeight;
+            }
+
+            setInterval(addLog, 3000);
+        </script>
+    </body>
+</html>
