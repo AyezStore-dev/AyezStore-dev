@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DefendX | Modern Enterprise Security</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #080A1A;
+            --glass-bg: rgba(18, 25, 43, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --primary: #00F2FE;
+            --secondary: #4FACFE;
+            --accent: #B224EF;
+            --text-main: #F3F4F6;
+            --text-muted: #9CA3AF;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: var(--bg-deep); 
+            color: var(--text-main); 
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* --- ANIMASI BACKGROUND ORBS --- */
+        .blob-1, .blob-2 {
+            position: absolute; border-radius: 50%; filter: blur(120px); z-index: -1;
+            animation: moveBlobs 20s infinite alternate cubic-bezier(0.5, 0, 0.5, 1);
+        }
+        .blob-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: rgba(0, 242, 254, 0.2); }
+        .blob-2 { bottom: -10%; right: -10%; width: 60vw; height: 60vw; background: rgba(178, 36, 239, 0.15); animation-delay: -5s; }
+        
+        @keyframes moveBlobs { 100% { transform: translate(10%, 10%) scale(1.1); } }
+
+        /* --- CONTAINER UTAMA & DASHBOARD LAYOUT --- */
+        .app-container {
+            width: 96%; max-width: 1600px; height: 92vh; margin: 4vh auto;
+            background: var(--glass-bg); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            border: 1px solid var(--glass-border); border-radius: 30px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.1);
+            display: grid; grid-template-columns: 280px 1fr 340px; padding: 25px; gap: 25px; overflow: hidden;
+        }
+
+        /* Header Customizer */
+        header { position: absolute; top: 30px; left: 40px; font-weight: 800; font-size: 24px; letter-spacing: 1px; display: flex; align-items: center; gap: 10px; }
+        .dot { width: 12px; height: 12px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--secondary)); box-shadow: 0 0 15px var(--primary); }
+
+        /* --- PANELS (KOTAK/KOLOM) --- */
+        .panel { display: flex; flex-direction: column; background: rgba(0, 0, 0, 0.2); border-radius: 24px; padding: 25px; border: 1px solid rgba(255, 255, 255, 0.03); position: relative; }
+        .panel-middle { padding-top: 60px; /* Space for absolute logo */ overflow-y: auto; overflow-x: hidden; }
+
+        .panel-title { font-size: 14px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); font-weight: 600; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+        /* --- STYLING FORM & BUTTON (PREMIUM) --- */
+        .input-group { margin-bottom: 20px; }
+        .input-group label { display: block; font-size: 13px; font-weight: 500; color: #D1D5DB; margin-bottom: 8px; }
+        .modern-input { width: 100%; padding: 14px 16px; background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); color: white; border-radius: 12px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; outline: none; transition: all 0.3s; }
+        .modern-input:focus { border-color: var(--secondary); background: rgba(255, 255, 255, 0.08); box-shadow: 0 0 0 4px rgba(79, 172, 254, 0.1); }
+        select.modern-input { cursor: pointer; }
+        textarea.modern-input { height: 100px; resize: none; }
+
+        .btn-modern { width: 100%; padding: 15px; border: none; border-radius: 12px; background: linear-gradient(135deg, var(--secondary), var(--primary)); color: #000; font-family: 'Plus Jakarta Sans'; font-size: 14px; font-weight: 700; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 10px 20px rgba(0, 242, 254, 0.2); }
+        .btn-modern:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(0, 242, 254, 0.4); }
+
+        /* --- PROFIL AFTER LOGIN --- */
+        #profile-section { display: none; text-align: center; margin-top: 30px; animation: fadeIn 0.8s; }
+        .avatar { width: 90px; height: 90px; border-radius: 50%; margin: 0 auto 20px; background: linear-gradient(135deg, var(--secondary), var(--primary)); display: flex; align-items: center; justify-content: center; position: relative; }
+        .avatar img { width: 84px; height: 84px; border-radius: 50%; object-fit: cover; border: 2px solid var(--bg-deep); }
+        .tag-role { display: inline-block; padding: 4px 12px; background: rgba(0, 242, 254, 0.15); color: var(--primary); border-radius: 20px; font-size: 11px; font-weight: 700; margin-top: 10px; letter-spacing: 1px; }
+
+        /* --- GRID MATERI --- */
+        .materi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        .materi-card { background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); border-radius: 16px; overflow: hidden; cursor: pointer; transition: 0.4s; display: flex; flex-direction: column; }
+        .materi-card:hover { border-color: rgba(79, 172, 254, 0.4); background: rgba(255,255,255,0.04); transform: translateY(-5px); }
+        
+        .card-img-wrap { width: 100%; height: 160px; overflow: hidden; position: relative; }
+        .card-img-wrap img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; opacity: 0.8; }
+        .materi-card:hover .card-img-wrap img { transform: scale(1.08); opacity: 1; }
+        .card-badge { position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); color: var(--primary); font-size: 10px; font-weight: 700; padding: 5px 10px; border-radius: 8px; border: 1px solid rgba(0, 242, 254, 0.3); }
+
+        .card-body { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; }
+        .card-body h3 { font-size: 16px; font-weight: 700; margin-bottom: 8px; color: #FFF; line-height: 1.4; }
+        .card-body p { font-size: 13px; color: var(--text-muted); line-height: 1.6; margin-bottom: 20px; flex-grow: 1; }
+        
+        .card-action { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px; color: var(--primary); font-weight: 600; font-size: 13px; }
+        .card-action svg { width: 18px; transition: 0.3s; }
+        .materi-card:hover .card-action svg { transform: translateX(5px); }
+
+        /* KUNCI (LOCK SCREEN MATERI) */
+        .lock-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(8, 10, 26, 0.6); backdrop-filter: blur(12px); border-radius: 24px; z-index: 10; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; transition: 0.5s; }
+        .icon-lock { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .lock-overlay h2 { font-size: 24px; font-weight: 700; margin-bottom: 10px; background: linear-gradient(135deg, #fff, var(--text-muted)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .lock-overlay p { font-size: 14px; color: var(--text-muted); max-width: 300px; }
+
+        /* --- MODAL DETAIL BACA MATERI --- */
+        #detailModal { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.6); backdrop-filter: blur(15px); z-index: 9999; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: 0.4s; }
+        #detailModal.active { opacity: 1; pointer-events: auto; }
+        
+        .modal-box { width: 90%; max-width: 800px; height: 85vh; background: #0F1528; border: 1px solid var(--glass-border); border-radius: 30px; overflow: hidden; display: flex; flex-direction: column; transform: scale(0.9); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 40px 100px rgba(0,0,0,0.8); }
+        #detailModal.active .modal-box { transform: scale(1); }
+
+        .modal-img { width: 100%; height: 35vh; position: relative; background: #000; }
+        .modal-img img { width: 100%; height: 100%; object-fit: cover; opacity: 0.6; }
+        .btn-close { position: absolute; top: 20px; right: 20px; background: rgba(0,0,0,0.5); backdrop-filter: blur(10px); color: white; border: 1px solid rgba(255,255,255,0.2); width: 40px; height: 40px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.3s; z-index: 10; }
+        .btn-close:hover { background: var(--accent); border-color: var(--accent); }
+        
+        .modal-body { padding: 40px; flex-grow: 1; overflow-y: auto; color: #D1D5DB; }
+        .modal-body h1 { color: #fff; font-size: 28px; margin-bottom: 10px; }
+        .tagline { display: inline-block; background: rgba(79, 172, 254, 0.1); color: var(--secondary); padding: 5px 12px; border-radius: 6px; font-size: 13px; font-weight: 600; margin-bottom: 25px; border: 1px solid rgba(79, 172, 254, 0.3); }
+        
+        .materi-content h3 { font-size: 18px; color: var(--primary); margin: 30px 0 15px; padding-bottom: 5px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .materi-content p { font-size: 15px; line-height: 1.8; margin-bottom: 15px; }
+        .materi-content ul { padding-left: 20px; margin-bottom: 15px; line-height: 1.8; font-size: 15px; }
+
+        /* Form Feedback Bot */
+        .status-wa { margin-top: 15px; font-size: 13px; text-align: center; font-weight: 500; display: none; padding: 10px; border-radius: 8px; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* HP Responsive */
+        @media(max-width: 1024px) {
+            body { height: auto; overflow: auto; padding: 15px; }
+            .app-container { height: auto; display: flex; flex-direction: column; margin: 0; width: 100%; padding: 15px; }
+            .panel { overflow: visible; }
+            header { position: relative; top: 0; left: 0; justify-content: center; margin-bottom: 10px;}
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Animasi Latar Premium -->
+    <div class="blob-1"></div>
+    <div class="blob-2"></div>
+
+    <div class="app-container">
+        <!-- Logo Desktop -->
+        <header><div class="dot"></div> DEFENDX.</header>
+
+        <!-- PANEL 1: KIRI (AKUN / AUTENTIKASI) -->
+        <div class="panel">
+            <div class="panel-title" style="margin-top: 50px;">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> Identity Auth
+            </div>
+
+            <!-- Bagian Form Login -->
+            <div id="login-section">
+                <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 25px;">Masukkan kredensial enterprise Anda untuk membuka sistem keamanan tingkat lanjut.</p>
+                <form onsubmit="doLogin(event)">
+                    <div class="input-group">
+                        <label>USER / EMAIL ID</label>
+                        <input type="text" id="uname" class="modern-input" placeholder="agent.007@defendx.com" required>
+                    </div>
+                    <div class="input-group">
+                        <label>PASSWORD SECURITY</label>
+                        <input type="password" class="modern-input" placeholder="••••••••" required>
+                    </div>
+                    <button type="submit" id="btn-login" class="btn-modern">VERIFY IDENTITY</button>
+                </form>
+            </div>
+
+            <!-- Bagian Profil Aktif (Muncul Usai Login) -->
+            <div id="profile-section">
+                <div class="avatar"><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150" alt="Avatar"></div>
+                <h2 style="font-size: 20px; font-weight: 700; color: #FFF;" id="disp-name">Loading...</h2>
+                <div class="tag-role">ENTERPRISE ADMINISTRATOR</div>
+                
+                <div style="background: rgba(255,255,255,0.03); padding: 15px; border-radius: 12px; margin: 30px 0;">
+                    <p style="font-size: 12px; color: var(--text-muted); display: flex; justify-content: space-between; margin-bottom: 10px;"><span>Server Status</span> <span style="color:#10B981;">Online & Secure</span></p>
+                    <p style="font-size: 12px; color: var(--text-muted); display: flex; justify-content: space-between;"><span>Access Level</span> <span style="color:var(--primary);">Clearance Lvl. 5</span></p>
+                </div>
+                
+                <button onclick="doLogout()" class="btn-modern" style="background: rgba(255,51,102,0.1); color: #FF3366; box-shadow: none;">Log Out / Lock Data</button>
+            </div>
+        </div>
+
+        <!-- PANEL 2: TENGAH (MODUL EDUKASI CYBER SECURITY) -->
+        <div class="panel panel-middle" style="position: relative;">
+            
+            <div class="panel-title">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg> 
+                Learning Base & Architecture
+            </div>
+
+            <!-- Lapisan Kunci Belum Login -->
+            <div id="lockScreen" class="lock-overlay">
+                <div class="icon-lock"><svg width="40" height="40" fill="none" stroke="#00F2FE" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></div>
+                <h2>Encrypted Storage</h2>
+                <p>Otentikasi pada panel di sebelah kiri untuk mengunduh Modul dan Infrastruktur keamanan informasi perusahaan.</p>
+            </div>
+
+            <!-- Daftar Kartu -->
+            <div class="materi-grid" id="data-render">
+                <!-- Javascript Injection -->
+            </div>
+        </div>
+
+        <!-- PANEL 3: KANAN (ASISTEN / BOT WHATSAPP API) -->
+        <div class="panel">
+            <div class="panel-title">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg> 
+                Direct Action Bot
+            </div>
+            
+            <div style="background: rgba(0, 242, 254, 0.05); border: 1px solid rgba(0, 242, 254, 0.2); padding: 15px; border-radius: 12px; margin-bottom: 25px;">
+                <p style="font-size: 13px; line-height: 1.5; color: var(--text-main);">Laporkan anomali, insiden celah keamanan, atau request audit langsung ke Tim SOC (Security Operations Center) via WhatsApp Server kami.</p>
+            </div>
+
+            <form onsubmit="doSendBot(event)">
+                <div class="input-group">
+                    <label>Nama Insiden / Reporter</label>
+                    <input type="text" id="wName" class="modern-input" placeholder="ex: Penemuan Bug Web" required>
+                </div>
+                <div class="input-group">
+                    <label>No. Telepon Aktif (Utk Balasan WA)</label>
+                    <input type="number" id="wUserWa" class="modern-input" placeholder="081234..." required>
+                </div>
+                <div class="input-group">
+                    <label>Severity (Tingkat Bahaya)</label>
+                    <select id="wLvl" class="modern-input" required>
+                        <option value="Tinggi (Breach)">Kritis - Sistem Ditembus (Red Code)</option>
+                        <option value="Sedang (Bug)">Medium - Celah Terdeteksi</option>
+                        <option value="Rendah (Ask)">Konsultasi / Pengaturan Server</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Deskripsi Detail</label>
+                    <textarea id="wMsg" class="modern-input" placeholder="Sebutkan IP, Log Eror, atau skenario..." required></textarea>
+                </div>
+                <button type="submit" id="wBtn" class="btn-modern">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                    SUBMIT TO SERVER BOT
+                </button>
+                <div id="wNotif" class="status-wa"></div>
+            </form>
+        </div>
+
+    </div>
+
+    <!-- WINDOW MODAL PEMBACA (RICH CONTENT) -->
+    <div id="detailModal">
+        <div class="modal-box">
+            <div class="modal-img">
+                <img id="mImg" src="" alt="Thumbnail Cover">
+                <button class="btn-close" onclick="closeModal()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="tagline" id="mTag">CYBERSECURITY COMPONENT</div>
+                <h1 id="mTitle">Memuat Data Server...</h1>
+                <div class="materi-content" id="mContent">
+                    <!-- Konten disisipkan otomatis disini -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* === DATABASE MATERI MENDALAM === */
+        const moduls = [
+            {
+                id: 1, title: "Anatomi Lengkap & Mutasi Malware Modern", tag: "THREAT INTELLIGENCE",
+                thumb: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=600&auto=format&fit=crop", cover: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=1200&auto=format&fit=crop",
+                summary: "Pembahasan tingkat lanjut tentang Ransomware As A Service (RaaS), infeksi tanpa file (Fileless Malware), dan evolusi Spyware dalam pencurian kripto.",
+                fullBody: `
+                    <p>Malware pada dekade modern tidak lagi sesederhana Virus komputer tahun 2000-an yang menghapus data. Target hacker kini terorganisir sepenuhnya demi profit bisnis terselubung skala multinasional.</p>
+                    
+                    <h3>1. Ransomware-as-a-Service (RaaS)</h3>
+                    <p>Dalam Dark Web, programmer malware menyewakan software enkripsi milik mereka (misal: LockBit, Conti) kepada afiliator biasa yang tidak pandai coding (Affiliate). Afiliator mencari perusahaan korban dan membobol datanya, sedangkan dev aslinya meminta persentase royalti tebusan Bitcoin. Bisnis jahat ini disebut RaaS.</p>
+
+                    <h3>2. Fileless Malware (Malware Tak Terlihat)</h3>
+                    <p>Merupakan taktik penyamaran sempurna karena mereka **tidak mengunduh satu file EXE berbahaya pun ke Hard Drive** target, melainkan membajak fungsi resmi Windows seperti <code>PowerShell.exe</code> di RAM (Memori Tipe volatile). Hal ini membuatnya kebal oleh sistem Antivirus konvensional standar.</p>
+
+                    <h3>3. Advanced Trojan / RAT</h3>
+                    <p>Tipe RAT (*Remote Access Trojan*) memposisikan komputermu ibarat komputer Zombie. Dari luar negeri, penyusup menyalakan kameramu (Webcam), mengawasi layar, hingga membobol dompet Cryptocurrency (Cold Wallet) dari sistem Anda tanpa memunculkan ciri eror apapun di mata user aslinya.</p>
+                `
+            },
+            {
+                id: 2, title: "Arsitektur Kriptografi Enterprise", tag: "DATA ENCRYPTION",
+                thumb: "https://images.unsplash.com/photo-1614064641913-6b71a2eaaebb?w=600&auto=format&fit=crop", cover: "https://images.unsplash.com/photo-1614064641913-6b71a2eaaebb?w=1200&auto=format&fit=crop",
+                summary: "Standard keamanan komunikasi Bank, AES-256 vs RSA Asimetris, Digital Certificate SSL/TLS, hingga ancaman Super Computer Quantum.",
+                fullBody: `
+                    <p>Dasar perbankan digital dan aplikasi Web yang Anda percaya di seluruh belahan dunia bersandar hanya kepada satu perhitungan eksak matematis kuat yang kami kenal sebagai Ilmu Kriptografi.</p>
+
+                    <h3>Kriptografi Simetris (Advanced Encryption Standard / AES-256)</h3>
+                    <p>Standar keamanan tinggi militer AS yang membutuhkan sebuah <b>"Single Kunci"</b> baik bagi pembuat maupun pembuka gembok data dokumen elektronik. Meskipun ringan dijalankan memori prosesor yang standar sekalipun (Cocok mengenkripsi Drive server total hingga BergigaByte).</p>
+
+                    <h3>Kriptografi Asimetris (RSA/ECC Algorithm)</h3>
+                    <p>Beda halnya AES di mana kurir diintai bahaya manakala berbagi gembok di jaringan internet. Metode inovasi kunci Asimetris akan menciptakan Dua sisi sepasang sandi yang beda persis namun terhubung: "Kunci Terpublikasi Umum/Public Key" khusus diperbolehkan menge-gembok barang, manakala Cuma si pemegang original khusus yaitu "Privasi Sentral Rahasia /Private-key " sebagai Pihak Spesifik Pengeklaim & bisa menterjemahkan Kode data yang Terdigesting. <br/><br/>Contoh nyatanya terletak diketika Website berfitur Lambang Gembok peredam di Chrome kalian [<b>https/ TLS - SSL Tunneling Protokol Security Socketnya</b>]. </p>
+
+                    <h3>Ketahanan Algoritma Melawan Quantum?</h3>
+                    <p>Evolusi komputasi telah mencapai Komputer Kuantum, di masa beberapa tahun ke depan di prediksi Algoritma enkripsi asimetrik model konvesional layaknya (Rivest Shamir & RSA - Curve  Elip / Elliptic) segera gampang Pecah Terbongkar secara cepat. Karena dari hal darurat yang krusial seperti perlombaan "Panjang Kunci yang kian Masive Enkripsi Terus di Persiapkan"</p>
+                `
+            },
+            {
+                id: 3, title: "Vulnerabilitas Injeksi Pada Aplikasi Cloud/Web", tag: "WEB EXPLOITATION",
+                thumb: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=600&auto=format&fit=crop", cover: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1200&auto=format&fit=crop",
+                summary: "Kenapa database SQL Jutaan pelanggan Toko E-commerce sering bocor? Mengurai alur celah dari SQL-Injection ke Zero-Day RCE.",
+                fullBody: `
+                    <p>Badan regulasi cyber Global <b>(OWASP Top Ke - 1)</b> Selama rentan belasan edisi telah menjadikan Kategori Injection ke porsi posisi 1 ancaman web.</p>
+                    
+                    <h3>Definisi Dasar Parameter Bahaya Input Pengguna </h3>
+                    <p>Kejadian di akibatkan karna Server Back end dari Aplikasi tidak pernah melakukan sterilisasi terhadap Text Kolom formulir Input / Parameter di Website kita.<br> Seseorang menulisi formulir <code> Email ='Or true-- ; Dropping_Tabel Customers </code> , kemudian ketika tombol enter login berjalan logika kode Server akan di Kelabui sedemikan hal dimana Ia mengidentifikasinya ini berupa  'Tindakan Benar Admin Systemnya' sehingga memperbolehkannya Bypass Aksesnya Ke Dasbor Admin (Padahal belum Pernah ada User Teregitrasi  terjadi Password ) - Metode Manipulasinya: SQL i/ ( Structured-Que ) Inject .</p>
+
+                    <h3>Blind Injections Eksekusi (Tipe Gelap Mematikan)</h3>
+                    <p>Serang di buat tak dapat berwujud  Eror Code Log Apapun kepada sang  Pemetras karena Perusaahaan Developer sering menaruh Pengabaian  Kode / Menyembunyikan Response eror kode Tampilan Website jika Error (Di set Eror "Page505 NotFound Internal ). Penjahat Cuma memanfaatkan Fitur Detik Penundaan delay waktu <i>Time based Response</em>  guna melakukan Dumping Akses Total Database Kartu Pelanggan Credit perlahan demi sebuah perlahan tanpa memunculkan Riuh Di Layar Alarm NOC Perusahaaanya  Target Tsb .</p>
+
+                    <h3>Sistem Sanitasi Data - Cara Penanganannya </h3>
+                    <ul>
+                    <li>1. Pedomani teknik pengetikan : <strong>Prepard statement Coding Patern OR Bind Parametr Variable Model Coudnya .</strong> Hal inilah menyebabkan query koding yang akan dijalankan Oleh bahasa servernya ke basis datanya itu benar tidak digolongkna Sejenis Command namun di proses Sebagai Literal Sting Sematam- mata biasa tanpa Hak mengeksekusi Program OS apapun juga . </li>
+                     <li>2. Firewalls Level Aplikasi( W. A. F Software - Perlindungan  CloudFlare Pro).</li></ul>
+                `
+            },
+            {
+                id: 4, title: "OSINT (Intelligence Framework Tracking & Doxing) ", tag: "THREAT INTELLIGENCE",
+                thumb: "https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=600&auto=format&fit=crop", cover: "https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=1200&auto=format&fit=crop",
+                summary: "Proses Intelijen Perburuan Target dengan metode pencarian riwayat data diri publik Internet Publik , Meta GPS, Geofencing Location Digital ",
+                fullBody: `
+                     <p>Pola pelacakan investigasi detektif Open-Sourcing / Public  Internet Intelligence sering men-tracking Profil Anonim seorang Sindikat pelaku dengan cara legal/ bebas hambatan dan dapat dilakukn para praktiksi Analyst Cyber Forensik .  Metode tak Terbataskan Batas-batas Kodingannya Cukup Cepat dengan Pergerkan Profil Sosial : Data O.S. I .N. T.</p>
+
+                    <h3>A . Konsep Metadata Pada Jejak Image Gambar Kamera</h3>
+                    <p> EXIF DATALOGS . Apakah anda Sadar jika sebuah potret yang telah jepret menggunakan IPhone Kamera Smartphone menyimpan koordinat Altimater satelit Tinggi hingga Exact GPS  Longitude Di Gambar Format jpg Original ? Ya - File-File Meta Digital Gambar/Pdf Sangat dapat mendeteksi dimana Tempat Koordinasi Spesik sebuah Alibi kejadian Pelakunya secara Nyata . Tool Analysis spt( ExiftTool ). </p>
+                    
+                    <h3> B . Reverse Enginering Media Email</h3>
+                    <p> Mencari tahu profil Peretas berdasarkan Email nya dengan Crosschek Database Public ( Email checker) untuk meriview Adakah Pengecekkan Data Username Pemiliki , Akun Linkedin yang Sama Profil Id Nya dengan di Berkas Profil Data Forum Illegal. Terbentuk Peta "Tangle / Skema laba Konexitas Graph Database Hubungan Rekan Si Pemilik Email itu . Hal Cukup memuluskan Kerja Aparatur Menngagap Otak Intelek utamanya Dbalik Layer Screen Monitor Dark Net-Terkait tsb. </p>
+                `
+            }
+        ];
+
+        /* --- 1. SETUP KONTEN OTOMATIS SAAT WEB LOAD --- */
+        window.onload = function() {
+            let layoutHtml = '';
+            moduls.forEach(el => {
+                layoutHtml += `
+                    <div class="materi-card" onclick="openModal(${el.id})">
+                        <div class="card-badge">${el.tag}</div>
+                        <div class="card-img-wrap"><img src="${el.thumb}" alt="Cover ${el.title}"></div>
+                        <div class="card-body">
+                            <h3>${el.title}</h3>
+                            <p>${el.summary}</p>
+                            <div class="card-action">BACA DETAIL <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('data-render').innerHTML = layoutHtml;
+        }
+
+        /* --- 2. SISTEM OTENTIKASI ANIMATIF (LOGIN - LOGOUT) --- */
+        const lockScr = document.getElementById('lockScreen');
+        const lSec = document.getElementById('login-section');
+        const pSec = document.getElementById('profile-section');
+        
+        function doLogin(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btn-login');
+            const username = document.getElementById('uname').value.split('@')[0];
+            
+            btn.innerHTML = `<span style="font-size:16px;">⏳</span> MENCOCOKKAN ENKRIPSI...`;
+            btn.style.opacity = 0.8;
+
+            setTimeout(() => {
+                lSec.style.display = 'none';
+                document.getElementById('disp-name').innerText = username.toUpperCase();
+                pSec.style.display = 'block';
+                
+                // Menganimasikan hilangnya gembok materi
+                lockScr.style.opacity = '0';
+                lockScr.style.pointerEvents = 'none';
+                
+                // Refresh Button
+                btn.innerHTML = `VERIFY IDENTITY`;
+                btn.style.opacity = 1;
+            }, 1200);
+        }
+
+        function doLogout() {
+            // Restore Tampilan Semula
+            pSec.style.display = 'none';
+            lSec.style.display = 'block';
+            document.getElementById('uname').value = '';
+            
+            lockScr.style.pointerEvents = 'auto';
+            lockScr.style.opacity = '1';
+        }
+
+        /* --- 3. LOGIC MODAL POPUP BACA MATERI --- */
+        const mObj = document.getElementById('detailModal');
+        
+        function openModal(idObj) {
+            const dataRow = moduls.find(m => m.id === idObj);
+            document.getElementById('mTitle').innerHTML = dataRow.title;
+            document.getElementById('mContent').innerHTML = dataRow.fullBody;
+            document.getElementById('mTag').innerHTML = dataRow.tag;
+            document.getElementById('mImg').src = dataRow.cover;
+            mObj.classList.add('active');
+        }
+
+        function closeModal() {
+            mObj.classList.remove('active');
+        }
+
+        /* --- 4. ENGINE KIRIM PESAN ASISTEN WA VIA FONNTE API --- */
+        async function doSendBot(e) {
+            e.preventDefault();
+            const btSb = document.getElementById('wBtn');
+            const ntSt = document.getElementById('wNotif');
+            
+            const reqUser = document.getElementById('wName').value;
+            const reqPhone = document.getElementById('wUserWa').value;
+            const reqSeverity = document.getElementById('wLvl').value;
+            const reqDetLog = document.getElementById('wMsg').value;
+
+            const A_TOKEN = "78f38tgp6sKcbRe5ib5y"; // Token Original Fonnte 
+            const M_ADMIN_TLP = "083171951093";   // Handphone Adminnya Anda
+
+            // Teks Desain Admin Server Pusat. 
+            const TemplateAdminPush = `🔴 *DEFEND-X CYBER NOTIFICATION SYSTEM* 🔴\n\nIdentitas Agent: ${reqUser}\nStatus Handphone: ${reqPhone}\nSkala Tingkat Isu: *[ ${reqSeverity} ]*\n\n📋 *Ringkasan Kendala (Sys Logs):*\n"${reqDetLog}"\n\n=========================\n(AutoGenerated Paging Message)`;
+
+            // Desain Penerima Konsumen yg Ngirim : Auto Responnya (Customer).
+            const TemplateClientsRecive = `Hormat Perkenalan Saudara: *${reqUser}*\n\nMelalui pesan Notif Otomatis Ini Mengonfirmasikan bahwa Seluruh Paket Berita Keamanan Siber Isu anda Dengan Rating (${reqSeverity}) Sedang Tahapan Validasi ke  Antrian  Teknisi Analyst DEFEND X Security - Database Data Centre SOC .\nKami sesegera Responds Permasalah tersebut, Harap Tenang . Data Termonitor Enkripsi Aman ! 🛡️\n\n_[ Server No Replies Automation AI - System Fonnte Gateway Link_ ]`;
+
+            btSb.innerText = "[ ENCRYPTION... TRANSMIT PROGRESS ]";
+            btSb.style.background = "#fff";
+            ntSt.style.display = 'block';
+            ntSt.style.color = 'var(--primary)';
+            ntSt.innerText = "⏳ Sedang Menegksekusi Api Tunnels Pengirim Fonnte API Gateaways .. Harap Di Tunggu...  ";
+
+            try {
+                 /* 2 Pararels Array Fatching Target - Efisiense Eksekutornya . Karena Target Harus Memliliki Tujuan  Khusus masing teks pesan.  */
+                const Execute1 = fetch("https://api.fonnte.com/send", {
+                    method: "POST", headers: { "Authorization": A_TOKEN },
+                    body: new URLSearchParams({ target: M_ADMIN_TLP, message: TemplateAdminPush })
+                });
+
+                const Execute2 = fetch("https://api.fonnte.com/send", {
+                    method: "POST", headers: { "Authorization": A_TOKEN },
+                    body: new URLSearchParams({ target: reqPhone, message: TemplateClientsRecive })
+                });
+
+                const [GetRespAdms , _ ] = await Promise.all([Execute1, Execute2]);
+                const RDataParse = await GetRespAdms.json();
+
+                if (RDataParse.status) {
+                    ntSt.style.background = 'rgba(16, 185, 129, 0.1)';
+                    ntSt.style.color = '#10B981';
+                    ntSt.innerText = "✅ TRANSAKSI LOG SERVER TERKIRIM SUKSES! Periksa Kotak Inbox Di Admin Beserta Balasan Client.";
+                } else { throw new Error(RDataParse.reason || "Kouta Batas/API Limit Trouble Server."); }
+
+            } catch (xrrrs) {
+                // FALLBACK JIKA SISTEM/ TOKEN TOKEN EROR (Dialikan Tautkan Biasa) :
+                ntSt.style.background = 'rgba(239, 68, 68, 0.1)';
+                ntSt.style.color = '#EF4444';
+                ntSt.innerText = "🚨 Jaringan Gateway Terganggu (Gagal Bot)! Redirect Jalur Darurat Aplikasi Biasa WhatsApp... ";
+                setTimeout(() => { window.open(`https://api.whatsapp.com/send?phone=${M_ADMIN_TLP}&text=${encodeURIComponent(TemplateAdminPush)}`); }, 2000);
+            } finally {
+                setTimeout(() => { 
+                   btSb.innerHTML = `SUBMIT TO SERVER BOT`;
+                   btSb.style.background = `linear-gradient(135deg, var(--secondary), var(--primary))`;
+                   document.getElementById('wName').value = '';
+                   document.getElementById('wUserWa').value = '';
+                   document.getElementById('wMsg').value = '';
+                }, 3000);
+            }
+        }
+    </script>
+</body>
+</html>
